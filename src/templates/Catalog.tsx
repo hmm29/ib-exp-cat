@@ -6,6 +6,7 @@ import '../styles/styles.scss'
 import * as catalogStyles from './Catalog.module.scss'
 
 import { connect } from 'react-redux'
+import { updatePageIndexInStateAction } from "../state/actions"
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
 import { search, updatePageIndex } from 'ka-table/actionCreators'
@@ -57,12 +58,22 @@ const tablePropsInit: ITableProps = {
 
 export interface ICatalogWithPageContext {
   pageContext: { experts: any[]}
+  pageIndex: number
+  updatePageIndexInState: Function
 }
 
-export const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext }) => {
-  let init = {...tablePropsInit, data: pageContext.experts};
+const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext, pageIndex, updatePageIndexInState }) => {
+  let init = {...tablePropsInit, data: pageContext.experts,   paging: {
+      enabled: true,
+      pageIndex,
+      pageSize: 10,
+    }};
+
 
   const [tableProps, changeTableProps] = useState(init)
+
+  updatePageIndexInState(tableProps.paging.pageIndex);
+
   const dispatch: DispatchFunc = action => {
     changeTableProps((prevState: ITableProps) => kaReducer(prevState, action));
     window.scrollTo(0, 0); // top of next page of results
@@ -75,7 +86,10 @@ export const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext }) => {
           defaultValue={tableProps.search}
           placeholder="Search expert name, school, subject, or service..."
           onChange={event => {
-            if(tableProps.paging.pageIndex > 0) dispatch(updatePageIndex(0))
+            if(tableProps.paging.pageIndex > 0) {
+              dispatch(updatePageIndex(0)) // update locally in table
+              updatePageIndexInState(0) // update in global page index tracker
+            }
             dispatch(search(event.currentTarget.value))
           }}
           className="top-element"
@@ -86,6 +100,20 @@ export const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext }) => {
   )
 }
 
-export default Catalog;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updatePageIndexInState: (pageIndex) => {
+      dispatch(updatePageIndexInStateAction(pageIndex));
+    }
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    pageIndex: state.pageIndex
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Catalog);
 
 
