@@ -30,11 +30,18 @@ const tablePropsInit: ITableProps = {
     },
     {
       dataType: DataType.String,
-      key: 'Last_Name',
-      sortDirection: SortDirection.Descend,
+      key: 'Undergraduate_Institution',
+      sortDirection: SortDirection.Ascend,
       style: { width: 60 },
-      title: 'Last Name',
+      title: 'Undergrad School Name',
     },
+    {
+      dataType: DataType.String,
+      key: 'Graduate_Institution',
+      sortDirection: SortDirection.Ascend,
+      style: { width: 60 },
+      title: 'Grad School Name',
+    }
   ],
   data: [],
   dataRow: props => <DataRow {...props} />,

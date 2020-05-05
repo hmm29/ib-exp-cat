@@ -56,7 +56,7 @@ exports.createPages = ({ graphql, actions }) => {
       reject(result.error)
     }
 
-    // Create all Experts page
+    // Create all experts page.
     createPage({
       path: '/',
       component: catalogTemplate,

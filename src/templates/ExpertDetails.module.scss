@@ -1,12 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&family=Playfair+Display:wght@400;500;700&display=swap');
+
+*:focus {
+  outline:0 !important;
+}
+
+.row {
+  background: #fff;
+  font-size: 24px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.top-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.logos {
+  margin: 1rem 2rem;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+}
+
+.profile {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 2rem;
+}
+
+.description {
+  flex: 1;
+  padding: 2rem;
+
+  p {
+    margin: 10px;
+  }
+}
+
+.institution-logo {
+  width: 90px;
+  height: 90px;
+  margin-right: 1rem;
+}
+
+.expert-action-buttons {
+  display: flex;
+  flex: 0.5;
+  height: 100%;
+  background: #fff;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+
+  & > p {
+    margin: 0;
+  }
+}
+
+.expert-quick-facts {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-top: 40px;
+}
+
+.expert-quick-fact-entry {
+  margin: 0 10px 0 0;
+  & > p {
+    margin: 10px;
+  }
+}
+
+.price {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.quick-fact {
+  font-size: 18px;
+  text-align: center;
+}
+
+.description {
+  margin: 10px 0;
+}
+
 .book-button {
   font-family: "Open Sans", sans-serif;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 30px;
   border-radius: 50px;
   color: #fff;
   border: 0;
   margin: 20px 0 0 0;
-  padding: 10px 50px;
+  padding: 15px 60px;
   background: rgb(157, 122, 71);
   background: linear-gradient(135deg,#9e712c 10%,#926d32 30%,#e8d093 79%,#bda073 98%);
   box-shadow: 0px 9px 20px -5px rgba(190, 155, 96, 0.57);
