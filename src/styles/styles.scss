@@ -1,3 +1,18 @@
+.ka {
+  top: 60px;
+  position: relative;
+}
+
+.ka-thead {
+  position: fixed;
+  top: 65px;
+  z-index: 9999;
+}
+
+.ka-tbody {
+  padding-top: 40px;
+}
+
 .ka-paging {
   justify-content: center;
 }

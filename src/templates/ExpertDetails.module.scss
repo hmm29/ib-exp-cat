@@ -15,6 +15,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  padding-top: 20px;
 
   h1 {
     font-family: "Playfair Display", serif;
@@ -24,7 +25,7 @@
 }
 
 .logos {
-  margin: 1rem 2rem;
+  margin: 0.5rem 1rem;
 }
 
 .main-content {
@@ -39,7 +40,6 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
 }
 
 .profile {
@@ -60,8 +60,9 @@
 }
 
 .institution-logo {
-  width: 90px;
-  height: 90px;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
   margin-right: 1rem;
 }
 
@@ -85,7 +86,7 @@
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 .expert-quick-fact-entry {
@@ -108,23 +109,27 @@
 }
 
 .quick-fact {
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
 }
 
 .description {
   margin: 10px 0;
+
+  li {
+    font-size: 20px;
+  }
 }
 
 .book-button {
   font-family: "Open Sans", sans-serif;
-  font-weight: 700;
-  font-size: 30px;
+  font-weight: 800;
+  font-size: 25px;
   border-radius: 50px;
   color: #fff;
   border: 0;
-  margin: 20px 0 0 0;
-  padding: 15px 60px;
+  margin: 0;
+  padding: 10px 50px;
   background: rgb(157, 122, 71);
   background: linear-gradient(135deg,#9e712c 10%,#926d32 30%,#e8d093 79%,#bda073 98%);
   box-shadow: 0px 9px 20px -5px rgba(190, 155, 96, 0.57);
@@ -140,5 +145,16 @@
 }
 
 .back-button {
+  position: fixed;
   font-size: 15px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 500;
+  border: 0;
+  margin: 10px;
+  padding: 10px 50px;
+  background: #fff;
+
+  &:hover {
+    cursor: pointer;
+  }
 }

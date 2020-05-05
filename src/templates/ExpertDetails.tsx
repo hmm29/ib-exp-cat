@@ -56,6 +56,7 @@ const ExpertDetails = ({ pageContext }) => (
             paddingRight={10}
             paddingLeft={10}
             borderRadius={200}
+            justifyContent="center"
             tags={
               '📚 College Application Review, 📝 English Essays, 🎤 Public Speaking, 🗣️ Debate (Public Forum)'
             }

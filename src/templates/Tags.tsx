@@ -41,6 +41,7 @@ interface Props {
   downbgColor?: string
   downfontColor?: string
   downborderColor?: string
+  justifyContent?: string
 }
 
 export class Tags extends React.Component<Props> {
@@ -201,6 +202,6 @@ export class Tags extends React.Component<Props> {
       }
     }
 
-    return <div style={{ textAlign: 'left', display: 'flex', flexWrap: 'wrap' }}>{tagArray}</div>
+    return <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: this.props.justifyContent || 'flex-start' }}>{tagArray}</div>
   }
 }
