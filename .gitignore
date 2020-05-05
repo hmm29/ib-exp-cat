@@ -58,9 +58,9 @@ typings/
 .env*
 
 # Ignores compiled TypeScript files
-./src/**/*.map
-./src/**/*.js
-./src/**/*.jsx
+src/**/*.map
+src/**/*.js
+src/**/*.jsx
 
 # gatsby files
 .cache/
