@@ -11,6 +11,15 @@
 
 .ka-tbody {
   padding-top: 40px;
+
+  // for column name line breaks (fat table head)
+  @media (max-width: 1340px) {
+    padding-top: 60px;
+  }
+
+  @media (max-width: 1080px) {
+    padding-top: 100px;
+  }
 }
 
 .ka-paging {
