@@ -16,7 +16,8 @@ exports.createPages = ({ graphql, actions }) => {
               id
               data {
                 First_Name
-                Last_Name
+                Headline
+                Comments
                 Photo {
                   url
                 }
@@ -33,8 +34,8 @@ exports.createPages = ({ graphql, actions }) => {
                   url
                 }
                 Languages
-                Comments
                 Location
+                Specialties
                 Employer_1_Name
                 Employer_1_Title
                 Employer_1_Logo {
@@ -61,19 +62,21 @@ exports.createPages = ({ graphql, actions }) => {
       path: '/',
       component: catalogTemplate,
       context: {
-        experts: result.data.allAirtable.edges.map(edge => edge.node.data),
+        experts: result.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id, Specialties_Text: (edge.node.data.Specialties && edge.node.data.Specialties.join(" ")) || ""})),
       },
     })
 
     // Create expert pages.
     result.data.allAirtable.edges.forEach(({ node }) => {
       createPage({
-        path: `${node.data.First_Name.trim()}`,
+        path: `${node.id}`,
         component: expertDetailsTemplate,
         context: {
           id: node.id,
           firstName: node.data.First_Name,
-          lastName: node.data.Last_Name,
+          headline: node.data.Headline,
+          comments: node.data.Comments,
+          specialties: node.data.Specialties,
           undergradInst: node.data.Undergraduate_Institution,
           undergradDegrees: node.data.Undergraduate_Degrees,
           undergradGradYear: node.data.Undergraduate_Graduation_Year,
@@ -94,7 +97,6 @@ exports.createPages = ({ graphql, actions }) => {
             title: node.data.Employer_2_Title,
           },
           languages: node.data.Languages,
-          comments: node.data.Comments,
           location: node.data.Location,
         },
       })

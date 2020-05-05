@@ -123,7 +123,7 @@ export class Tags extends React.Component<Props> {
   }
 
   render() {
-    var titleArray = this.props.tags.split(this.props.separator)
+    var titleArray = this.props.tags ? this.props.tags.split(this.props.separator) : []
     var tagArray = []
     var cursor_state = 'pointer'
     var tagFontColor = this.props.fontColor

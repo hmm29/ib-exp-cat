@@ -64,10 +64,6 @@
   justify-content: center;
   padding: 20px;
 
-  & > h1 {
-    margin: 0;
-  }
-
   & > h4 {
     margin: 10px 0;
   }
@@ -75,6 +71,9 @@
   h1 {
     font-family: 'Playfair Display', serif;
     font-weight: 800;
+    font-size: 28px;
+    line-height: 35px;
+    margin: 0;
   }
 }
 

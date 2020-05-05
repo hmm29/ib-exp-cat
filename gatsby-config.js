@@ -22,12 +22,12 @@ module.exports = {
             tableView: 'confirmed',
             query: 'GeneralExpertQuery',
           },
-          {
-            baseId: process.env.AIRTABLE_BASE_ID,
-            tableName: 'Admissions',
-            tableView: 'admissions',
-            query: 'AdmissionsExpertQuery',
-          },
+          // {
+          //   baseId: process.env.AIRTABLE_BASE_ID,
+          //   tableName: 'Admissions',
+          //   tableView: 'admissions',
+          //   query: 'AdmissionsExpertQuery',
+          // },
         ],
       },
     },

@@ -8,7 +8,10 @@ export interface ICatalogExpertRowProps {
     First_Name?: string
     Last_Name?: string
     Location?: string
+    Headline?: string
+    Comments?: string
     Email?: string
+    id?: string
     Undergraduate_Institution?: string
     Undergraduate_Degrees?: string
     Undergraduate_Graduation_Year?: number
@@ -16,6 +19,7 @@ export interface ICatalogExpertRowProps {
     Graduate_Degrees?: string
     Graduate_Graduation_Year?: number
     Languages?: string
+    Specialties?: [string]
     Photo?: [
       {
         url: string
@@ -86,7 +90,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
       <div className={catalogExpertRowStyles.expertRowContent}>
         <div className={catalogExpertRowStyles.expertRowInfo}>
           <h1>
-            {`${rowData.First_Name} ${rowData.Last_Name.charAt(0)}.`}
+            {rowData && rowData.Headline}
           </h1>
           <h4
             style={{
@@ -97,7 +101,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
           </h4>
           <div>
             <Tags
-              bgColor="#eee"
+              bgColor="#F1F5F7"
               hoverbgColor="#ddd"
               hoverborderColor="#ccc"
               fontColor="#111"
@@ -107,13 +111,11 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
               paddingLeft={10}
               borderRadius={200}
               tags={
-                '📚 College Application Review, 📝 English Essays, 🎤 Public Speaking, 🗣️ Debate (Public Forum)'
-              }
+                rowData.Specialties ? rowData.Specialties.join(", ") : null              }
             />
           </div>
           <div className={catalogExpertRowStyles.description}>
-            This expert was formerly one of the top providers in the country. 8
-            years of experience in Debate Skills Coaching.
+            {rowData.Comments}
           </div>
           <div className={catalogExpertRowStyles.expertQuickFacts}>
             <div className={catalogExpertRowStyles.expertQuickFactEntry}>
@@ -157,7 +159,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
           <span role="img">⭐</span>
         </div>
 
-        <Link to={`/${rowData.First_Name.trim()}`}>
+        <Link to={`/${rowData.id}`}>
           <button className={catalogExpertRowStyles.learnMoreButton}>
             LEARN MORE
           </button>

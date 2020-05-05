@@ -63,6 +63,13 @@ const tablePropsInit: ITableProps = {
       style: { width: 60 },
       title: 'Languages',
     },
+    {
+      dataType: DataType.String,
+      key: 'Specialties_Text',
+      sortDirection: SortDirection.Ascend,
+      style: { width: 60 },
+      title: 'Specialties',
+    },
   ],
   data: [],
   dataRow: props => <DataRow {...props} />,

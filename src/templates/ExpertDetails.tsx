@@ -3,7 +3,7 @@ import * as expertDetailsStyles from './ExpertDetails.module.scss'
 import { Tags } from './Tags'
 
 const ExpertDetails = ({ pageContext }) => (
-  <div className={expertDetailsStyles.row}>
+  <div className={expertDetailsStyles.container}>
     <button
       onClick={() => history.back()}
       className={expertDetailsStyles.backButton}
@@ -11,7 +11,7 @@ const ExpertDetails = ({ pageContext }) => (
       Back
     </button>
     <div className={expertDetailsStyles.topBar}>
-      <h1>{`${pageContext.firstName} ${pageContext.lastName.charAt(0)}.`}</h1>
+      <h1>{pageContext.headline}</h1>
       <div className={expertDetailsStyles.logos}>
         {pageContext.employer1 && pageContext.employer1.logo ? (
           <img
@@ -47,7 +47,7 @@ const ExpertDetails = ({ pageContext }) => (
       <div>
         <div>
           <Tags
-            bgColor="#eee"
+            bgColor="#F1F5F7"
             hoverbgColor="#ddd"
             hoverborderColor="#ccc"
             fontColor="#111"
@@ -58,13 +58,10 @@ const ExpertDetails = ({ pageContext }) => (
             borderRadius={200}
             justifyContent="center"
             tags={
-              '📚 College Application Review, 📝 English Essays, 🎤 Public Speaking, 🗣️ Debate (Public Forum)'
+              pageContext.specialties ? pageContext.specialties.join(", ") : null
             }
           />
         </div>
-        {pageContext.Comments ? <div className={expertDetailsStyles.description}>
-          {pageContext.Comments}
-        </div> : null}
         <div className={expertDetailsStyles.expertQuickFacts}>
           <div className={expertDetailsStyles.expertQuickFactEntry}>
             <p className={expertDetailsStyles.label}>Education</p>
@@ -159,6 +156,9 @@ const ExpertDetails = ({ pageContext }) => (
                     : ''
                 }`
               : ''}
+          </li> : null}
+          {pageContext.comments ? <li><strong>
+            {pageContext.comments}</strong>
           </li> : null}
         </ul>
       </div>
