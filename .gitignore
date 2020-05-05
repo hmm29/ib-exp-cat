@@ -57,6 +57,11 @@ typings/
 # dotenv environment variable files
 .env*
 
+# Ignores compiled TypeScript files
+**/src/**/*.map
+**/src/**/*.js
+**/src/**/*.jsx
+
 # gatsby files
 .cache/
 public

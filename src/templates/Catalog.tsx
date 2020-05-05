@@ -2,7 +2,10 @@ import * as React from 'react'
 import { PropsWithChildren, useState } from "react"
 import { CatalogExpertRow } from './CatalogExpertRow'
 import 'ka-table/style.scss'
+import '../styles/styles.scss'
 import * as catalogStyles from './Catalog.module.scss'
+
+import { connect } from 'react-redux'
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
 import { search, updatePageIndex } from 'ka-table/actionCreators'
@@ -70,10 +73,6 @@ export const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext }) => {
           }}
           className="top-element"
         />
-        <img
-          className={catalogStyles.searchIcon}
-          src="http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png"
-        />
       </div>
       <Table {...tableProps} dispatch={dispatch} />
     </div>
@@ -81,3 +80,5 @@ export const Catalog: React.FC<ICatalogWithPageContext> = ({ pageContext }) => {
 }
 
 export default Catalog;
+
+

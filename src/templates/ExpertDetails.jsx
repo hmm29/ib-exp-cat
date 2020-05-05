@@ -5,7 +5,8 @@ var expertDetailsStyles = require("./ExpertDetails.module.scss");
 var ExpertDetails = function (_a) {
     var pageContext = _a.pageContext;
     return (<div>
-    <h1>{pageContext.firstName + " " + pageContext.lastName.charAt(0) + "."}</h1>
+    <button onClick={function () { return history.back(); }} className={expertDetailsStyles.backButton}>Back</button>
+      <h1>{pageContext.firstName + " " + pageContext.lastName.charAt(0) + "."}</h1>
     <h3>
       {pageContext.undergradInst
         ? (((new Date).getFullYear() <= pageContext.undergradGradYear) ? 'Graduates' : 'Graduated') + " from " + pageContext.undergradInst
@@ -37,12 +38,12 @@ var ExpertDetails = function (_a) {
         ? pageContext.employer1.name + " " + (pageContext.employer1.title
             ? "as a " + pageContext.employer1.title
             : '')
-        : null}{' '}
+        : ''}{' '}
       {pageContext.employer2.name
         ? "and " + pageContext.employer2.name + " " + (pageContext.employer2.title
             ? "as a " + pageContext.employer2.title
             : '')
-        : null}
+        : ''}
     </p>
     <p>{pageContext.languages ? "Speaks " + pageContext.languages : ''}</p>
     <p>{pageContext.comments}</p>

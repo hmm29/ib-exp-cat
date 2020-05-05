@@ -3,7 +3,8 @@ import * as expertDetailsStyles from './ExpertDetails.module.scss'
 
 const ExpertDetails = ({ pageContext }) => (
   <div>
-    <h1>{`${pageContext.firstName} ${pageContext.lastName.charAt(0)}.`}</h1>
+    <button onClick={() => history.back()} className={expertDetailsStyles.backButton}>Back</button>
+      <h1>{`${pageContext.firstName} ${pageContext.lastName.charAt(0)}.`}</h1>
     <h3>
       {pageContext.undergradInst
         ? `${((new Date).getFullYear() <= pageContext.undergradGradYear) ? 'Graduates' : 'Graduated'} from ${pageContext.undergradInst}`
@@ -67,14 +68,14 @@ const ExpertDetails = ({ pageContext }) => (
               ? `as a ${pageContext.employer1.title}`
               : ''
           }`
-        : null}{' '}
+        : ''}{' '}
       {pageContext.employer2.name
         ? `and ${pageContext.employer2.name} ${
             pageContext.employer2.title
               ? `as a ${pageContext.employer2.title}`
               : ''
           }`
-        : null}
+        : ''}
     </p>
     <p>{pageContext.languages ? `Speaks ${pageContext.languages}` : ''}</p>
     <p>{pageContext.comments}</p>
@@ -86,4 +87,5 @@ const ExpertDetails = ({ pageContext }) => (
     </button>
   </div>
 )
+
 export default ExpertDetails

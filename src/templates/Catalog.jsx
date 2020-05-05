@@ -12,6 +12,7 @@ var React = require("react");
 var react_1 = require("react");
 var CatalogExpertRow_1 = require("./CatalogExpertRow");
 require("ka-table/style.scss");
+require("../styles/styles.scss");
 var catalogStyles = require("./Catalog.module.scss");
 var ka_table_1 = require("ka-table");
 var actionCreators_1 = require("ka-table/actionCreators");
@@ -64,7 +65,6 @@ exports.Catalog = function (_a) {
             dispatch(actionCreators_1.updatePageIndex(0));
         dispatch(actionCreators_1.search(event.currentTarget.value));
     }} className="top-element"/>
-        <img className={catalogStyles.searchIcon} src="http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png"/>
       </div>
       <ka_table_1.Table {...tableProps} dispatch={dispatch}/>
     </div>);
