@@ -18,6 +18,8 @@ exports.createPages = ({ graphql, actions }) => {
                 First_Name
                 Headline
                 Comments
+                Rate
+                Calendly_Link
                 Photo {
                   url
                 }
@@ -86,6 +88,8 @@ exports.createPages = ({ graphql, actions }) => {
           photo: node.data.Photo,
           undergraduateLogo: node.data.Undergraduate_Logo,
           graduateLogo: node.data.Graduate_Logo,
+          rate: node.data.Rate,
+          calendlyLink: node.data.Calendly_Link,
           employer1: {
             name: node.data.Employer_1_Name,
             logo: node.data.Employer_1_Logo,

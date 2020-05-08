@@ -12,6 +12,8 @@ export interface ICatalogExpertRowProps {
     Comments?: string
     Email?: string
     id?: string
+    Rate?: number
+    Calendly_Link?: string
     Undergraduate_Institution?: string
     Undergraduate_Degrees?: string
     Undergraduate_Graduation_Year?: number
@@ -149,8 +151,8 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
         </div>
       </div>
       <div className={catalogExpertRowStyles.expertActionButtons}>
-        <p className={catalogExpertRowStyles.price}>$100 USD</p>
-        <p>per hour</p>
+        <p className={catalogExpertRowStyles.price}>{rowData.Rate ? `$${rowData.Rate} USD` : "Custom Pricing"}</p>
+        <p>{rowData.Rate ? "per hour" : "Talk to Sales"}</p>
         <div>
           <span role="img">⭐</span>
           <span role="img">⭐</span>
@@ -167,7 +169,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
 
         <button
           className={catalogExpertRowStyles.bookButton}
-          onClick={() => alert(`You've booked ${rowData.First_Name}`)}
+          onClick={() => rowData.Calendly_Link ? window.open(`https://www.${rowData.Calendly_Link}`, '_blank') : null}
         >
           BOOK {rowData.First_Name && rowData.First_Name.toUpperCase()}
         </button>

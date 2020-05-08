@@ -14,6 +14,7 @@ import { DataType, SortDirection, SortingMode } from 'ka-table/enums'
 import { DataRowFuncPropsWithChildren, DispatchFunc } from 'ka-table/types'
 
 const dataArray: any[] = []
+const PAGE_SIZE = 5;
 
 const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
   return <CatalogExpertRow key={i} rowData={rowData} />
@@ -27,6 +28,13 @@ const tablePropsInit: ITableProps = {
       sortDirection: SortDirection.Ascend,
       style: { width: 60 },
       title: 'First Name',
+    },
+    {
+      dataType: DataType.String,
+      key: 'Headline',
+      sortDirection: SortDirection.Ascend,
+      style: { width: 60 },
+      title: 'Description',
     },
     {
       dataType: DataType.String,
@@ -79,7 +87,7 @@ const tablePropsInit: ITableProps = {
   paging: {
     enabled: true,
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: PAGE_SIZE,
   },
 }
 
@@ -100,7 +108,7 @@ const Catalog: React.FC<ICatalogWithPageContext> = ({
     paging: {
       enabled: true,
       pageIndex,
-      pageSize: 10,
+      pageSize: PAGE_SIZE,
     },
   }
 

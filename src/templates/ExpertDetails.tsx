@@ -90,6 +90,12 @@ const ExpertDetails = ({ pageContext }) => (
               {pageContext.languages || 'English'}
             </p>
           </div>
+          <div className={expertDetailsStyles.expertQuickFactEntry}>
+            <p className={expertDetailsStyles.label}>Rate</p>
+            <p className={expertDetailsStyles.quickFact}>
+              {pageContext.rate ? `$${pageContext.rate} USD/hour` : "Custom Pricing"}
+            </p>
+          </div>
         </div>
       </div>
       <div className={expertDetailsStyles.profileContainer}>
@@ -102,7 +108,7 @@ const ExpertDetails = ({ pageContext }) => (
         ) : null}
         <button
           className={expertDetailsStyles.bookButton}
-          onClick={() => alert(`You've booked ${pageContext.firstName}`)}
+          onClick={() => pageContext.calendlyLink ? window.open(`https://www.${pageContext.calendlyLink}`, '_blank') : null}
         >
           BOOK {pageContext.firstName && pageContext.firstName.toUpperCase()}
         </button>
