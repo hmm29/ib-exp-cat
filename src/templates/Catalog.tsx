@@ -6,7 +6,7 @@ import '../styles/styles.scss'
 import * as catalogStyles from './Catalog.module.scss'
 
 import { connect } from 'react-redux'
-import { updatePageIndexInStateAction } from '../state/actions'
+import { updateCatalogModeInStateAction, updatePageIndexInStateAction } from '../state/actions'
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
 import { search, updatePageIndex } from 'ka-table/actionCreators'
@@ -20,7 +20,7 @@ const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
   return <CatalogExpertRow key={i} rowData={rowData} />
 }
 
-const tablePropsInit: ITableProps = {
+const expertTablePropsInit: ITableProps = {
   columns: [
     {
       dataType: DataType.String,
@@ -92,8 +92,10 @@ const tablePropsInit: ITableProps = {
 }
 
 export interface ICatalogWithPageContext {
+  catalogMode: string
   pageContext: { experts: any[] }
   pageIndex: number
+  updateCatalogModeInState: Function
   updatePageIndexInState: Function
 }
 
@@ -103,7 +105,7 @@ const Catalog: React.FC<ICatalogWithPageContext> = ({
   updatePageIndexInState,
 }) => {
   let init = {
-    ...tablePropsInit,
+    ...expertTablePropsInit,
     data: pageContext.experts,
     paging: {
       enabled: true,
@@ -146,14 +148,18 @@ const Catalog: React.FC<ICatalogWithPageContext> = ({
 
 const mapDispatchToProps = dispatch => {
   return {
+    updateCatalogModeInState: catalogMode => {
+      dispatch(updateCatalogModeInStateAction(catalogMode))
+    },
     updatePageIndexInState: pageIndex => {
       dispatch(updatePageIndexInStateAction(pageIndex))
-    },
+    }
   }
 }
 
 const mapStateToProps = state => {
   return {
+    catalogMode: state.catalogMode,
     pageIndex: state.pageIndex,
   }
 }

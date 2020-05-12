@@ -1,7 +1,11 @@
 import { createStore } from 'redux';
 
-function reducer(state = {pageIndex: 0}, action) {
+function reducer(state = {catalogMode: 'experts', pageIndex: 0}, action) {
     switch (action.type) {
+      case 'CATALOG_MODE_UPDATE':
+        return Object.assign({}, state, {
+          catalogMode: action.catalogMode,
+        });
       case 'PAGE_INDEX_UPDATE':
         return Object.assign({}, state, {
           pageIndex: action.pageIndex,
