@@ -20,8 +20,14 @@ module.exports = {
             baseId: process.env.AIRTABLE_BASE_ID,
             tableName: 'Operators',
             tableView: 'confirmed',
-            query: 'GeneralExpertQuery',
+            queryName: 'Experts',
           },
+          {
+            baseId: process.env.AIRTABLE_BASE_ID,
+            tableName: 'Services',
+            tableView: 'published',
+            queryName: 'Services',
+          }
           // {
           //   baseId: process.env.AIRTABLE_BASE_ID,
           //   tableName: 'Admissions',

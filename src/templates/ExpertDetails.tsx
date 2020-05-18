@@ -106,12 +106,12 @@ const ExpertDetails = ({ pageContext }) => (
             className={expertDetailsStyles.profile}
           />
         ) : null}
-        <button
+        {pageContext.calendlyLink ? <button
           className={expertDetailsStyles.bookButton}
-          onClick={() => pageContext.calendlyLink ? window.open(`https://www.${pageContext.calendlyLink}`, '_blank') : null}
+          onClick={() =>  window.open(`https://www.${pageContext.calendlyLink}`, '_blank')}
         >
           BOOK {pageContext.firstName && pageContext.firstName.toUpperCase()}
-        </button>
+        </button> : null}
       </div>
       <div className={expertDetailsStyles.description}>
         <p className={expertDetailsStyles.label}>{pageContext.firstName}'s Credentials for Your Client</p>

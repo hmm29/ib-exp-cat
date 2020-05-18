@@ -8,9 +8,10 @@ exports.createPages = ({ graphql, actions }) => {
   )
 
   return new Promise(async (resolve, reject) => {
-    const result = await graphql(`
-      {
-        allAirtable {
+    const expertsResult = await graphql(`
+    {
+    allAirtable( filter: { table: { eq: "Operators" } }
+        sort: { fields: data___First_Name, order: ASC }) {
           edges {
             node {
               id
@@ -53,10 +54,32 @@ exports.createPages = ({ graphql, actions }) => {
           }
         }
       }
+    `);
+
+    const servicesResult = await graphql(`
+      {
+        allAirtable( filter: { table: { eq: "Services" } }
+        sort: { fields: data___Name, order: ASC }) {
+          edges {
+            node {
+              id
+              data {
+                Name
+                Emoji
+                Description
+              }
+            }
+          }
+        }
+      }
     `)
 
-    if (result.error) {
-      reject(result.error)
+    if (expertsResult.error) {
+      reject(expertsResult.error)
+    }
+
+    if (servicesResult.error) {
+      reject(servicesResult.error)
     }
 
     // Create all experts page.
@@ -64,12 +87,13 @@ exports.createPages = ({ graphql, actions }) => {
       path: '/',
       component: catalogTemplate,
       context: {
-        experts: result.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id, Specialties_Text: (edge.node.data.Specialties && edge.node.data.Specialties.join(" ")) || ""})),
+        experts: expertsResult.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id, Specialties_Text: (edge.node.data.Specialties && edge.node.data.Specialties.join(" ")) || ""})),
+        services: servicesResult.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id}))
       },
     })
 
     // Create expert pages.
-    result.data.allAirtable.edges.forEach(({ node }) => {
+    expertsResult.data.allAirtable.edges.forEach(({ node }) => {
       createPage({
         path: `${node.id}`,
         component: expertDetailsTemplate,

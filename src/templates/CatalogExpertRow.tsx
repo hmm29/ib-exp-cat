@@ -167,12 +167,12 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
           </button>
         </Link>
 
-        <button
+        {rowData.Calendly_Link ? <button
           className={catalogExpertRowStyles.bookButton}
-          onClick={() => rowData.Calendly_Link ? window.open(`https://www.${rowData.Calendly_Link}`, '_blank') : null}
+          onClick={() => window.open(`https://www.${rowData.Calendly_Link}`, '_blank')}
         >
           BOOK {rowData.First_Name && rowData.First_Name.toUpperCase()}
-        </button>
+        </button> : null}
       </div>
     </div>
   )

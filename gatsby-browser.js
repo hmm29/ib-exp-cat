@@ -3,9 +3,7 @@ import { Provider } from 'react-redux';
 
 import createStore from './src/state/createStore';
 
-const preloadedState = {pageIndex: 0};
-
-const store = createStore(preloadedState);
+const store = createStore();
 
 export const wrapRootElement = ({ element }) => {
   return (

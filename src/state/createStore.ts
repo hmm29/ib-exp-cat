@@ -1,6 +1,8 @@
 import { createStore } from 'redux';
 
-function reducer(state = {catalogMode: 'experts', pageIndex: 0}, action) {
+const initialState = {catalogMode: "services", pageIndex: 0};
+
+function reducer(state = initialState, action) {
     switch (action.type) {
       case 'CATALOG_MODE_UPDATE':
         return Object.assign({}, state, {
