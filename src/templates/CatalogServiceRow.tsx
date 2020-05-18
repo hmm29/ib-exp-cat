@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as catalogServiceRowStyles from './CatalogServiceRow.module.scss'
+import { updateExpertSearchTextInStateAction } from "../state/actions"
 
 interface ICatalogServiceRowProps {
   rowData: {
@@ -8,12 +9,14 @@ interface ICatalogServiceRowProps {
     Description?: string
     id?: string
   }
+  dispatch?: Function
   updateCatalogModeInState?: Function
+  updateExpertSearchTextInState?: Function
   [x: string]: any
 }
 
 export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
-  const { rowData, updateCatalogModeInState, ...rest } = props;
+  const { rowData, dispatch, updateCatalogModeInState, updateExpertSearchTextInState, ...rest } = props;
 
   return (
     <div {...rest} className={catalogServiceRowStyles.row}>
@@ -41,6 +44,8 @@ export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
         <button
           className={catalogServiceRowStyles.bookButton}
           onClick={() => {
+            dispatch(rowData.Name);
+            updateExpertSearchTextInState(rowData.Name); // this first
             updateCatalogModeInState('experts');
             window.scrollTo(0, 0); // back to top
           }}

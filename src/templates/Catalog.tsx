@@ -10,6 +10,7 @@ import * as catalogStyles from './Catalog.module.scss'
 import { connect } from 'react-redux'
 import {
   updateCatalogModeInStateAction,
+  updateExpertSearchTextInStateAction,
   updatePageIndexInStateAction,
 } from '../state/actions'
 
@@ -23,28 +24,43 @@ const PAGE_SIZE = 8
 
 export interface ICatalogProps {
   catalogMode: string
+  expertSearchText: string
   pageContext: { experts: any[]; services: any[] }
   pageIndex: number
   updateCatalogModeInState: Function
+  updateExpertSearchTextInState: Function
   updatePageIndexInState: Function
 }
 
 const Catalog: React.FC<ICatalogProps> = ({
   catalogMode,
+  expertSearchText,
   pageContext,
   pageIndex,
   updateCatalogModeInState,
+  updateExpertSearchTextInState,
   updatePageIndexInState,
 }) => {
   const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
     return <CatalogExpertRow key={i} rowData={rowData} />
   }
 
-  const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
-    return <CatalogServiceRow key={i} updateCatalogModeInState={updateCatalogModeInState} rowData={rowData} />
+  const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = (
+    { rowData },
+    i,
+  ) => {
+    return (
+      <CatalogServiceRow
+        key={i}
+        updateCatalogModeInState={updateCatalogModeInState}
+        updateExpertSearchTextInState={updateExpertSearchTextInState}
+        dispatch={(value) => dispatch(search(value))}
+        rowData={rowData}
+      />
+    )
   }
 
-  const expertTablePropsInit: ITableProps = {
+  const expertsTablePropsInit: ITableProps = {
     columns: [
       {
         dataType: DataType.String,
@@ -103,16 +119,16 @@ const Catalog: React.FC<ICatalogProps> = ({
         title: 'Specialties',
       },
     ],
-    data: [],
+    data: pageContext.experts,
     dataRow: props => <DataRow {...props} />,
     noDataRow: () => 'No results on this page...',
     rowKeyField: 'id',
     sortingMode: SortingMode.Single,
     paging: {
       enabled: true,
-      pageIndex: 0,
+      pageIndex,
       pageSize: PAGE_SIZE,
-    },
+    }
   }
 
   const servicesTablePropsInit: ITableProps = {
@@ -125,36 +141,21 @@ const Catalog: React.FC<ICatalogProps> = ({
         title: 'Service Name',
       },
     ],
-    data: [],
+    data: pageContext.services,
     dataRow: props => <DataRowServices {...props} />,
     noDataRow: () => 'No results on this page...',
     rowKeyField: 'id',
     sortingMode: SortingMode.Single,
   }
 
-  let expertsViewPropsInit = {
-    ...expertTablePropsInit,
-    data: pageContext.experts,
-    paging: {
-      enabled: true,
-      pageIndex,
-      pageSize: PAGE_SIZE,
-    },
-  }
-
-  let servicesViewPropsInit = {
-    ...servicesTablePropsInit,
-    data: pageContext.services,
-  }
-
   const [expertsViewTableProps, changeExpertsViewTableProps] = useState(
-    expertsViewPropsInit,
+    expertsTablePropsInit,
   )
   const [servicesViewTableProps, changeServicesViewTableProps] = useState(
-    servicesViewPropsInit,
+    servicesTablePropsInit,
   )
 
-  updatePageIndexInState(expertsViewTableProps.paging.pageIndex)
+  updatePageIndexInState(pageIndex);
 
   const dispatch: DispatchFunc = action => {
     changeExpertsViewTableProps((prevState: ITableProps) =>
@@ -171,15 +172,15 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
-  let expertsView = (
+  const expertsView = (
     <>
       <div className={catalogStyles.title}>
         <h2>IvyBridge - Your Verified Experts</h2>
       </div>
       <button
         onClick={() => {
-          updateCatalogModeInState("services");
-          window.scrollTo(0, 0); // back to top
+          updateCatalogModeInState('services')
+          window.scrollTo(0, 0) // back to top
         }}
         className={catalogStyles.backToServices}
       >
@@ -197,6 +198,8 @@ const Catalog: React.FC<ICatalogProps> = ({
                 updatePageIndexInState(0) // update in global page index tracker
               }
               dispatch(search(event.currentTarget.value))
+
+              console.log(expertsViewTableProps.data.length) // TODO: take count - divide by page size and using styld componnts remove pages with 0 results
             }}
             className="top-element"
           />
@@ -206,7 +209,7 @@ const Catalog: React.FC<ICatalogProps> = ({
     </>
   )
 
-  let servicesView = (
+  const servicesView = (
     <>
       <div className={catalogStyles.title}>
         <h2>IvyBridge - Your Full Services Catalog</h2>
@@ -219,13 +222,17 @@ const Catalog: React.FC<ICatalogProps> = ({
             placeholder="Search for an educational service..."
             onChange={event => {
               servicesDispatch(search(event.currentTarget.value))
+
+              console.log(servicesViewTableProps.data.length) // TODO: take count - divide by page size and using styld componnts remove pages with 0 results
             }}
             className="top-element"
           />
         </div>
         <button
           className={catalogStyles.customServiceButton}
-          onClick={() => window.open(`https://airtable.com/shr4clpmP2JgszBpD`, '_blank')}
+          onClick={() =>
+            window.open(`https://airtable.com/shr4clpmP2JgszBpD`, '_blank')
+          }
         >
           REQUEST A CUSTOM SERVICE
         </button>
@@ -237,7 +244,7 @@ const Catalog: React.FC<ICatalogProps> = ({
   return (
     <div className={catalogStyles.catalog}>
       {/* update tab here, and reset the page index to 0 when a service is clicked on in services mode  */}
-      {catalogMode === 'services' ? servicesView : expertsView}
+      {catalogMode === "services" ? servicesView : expertsView}
     </div>
   )
 }
@@ -246,6 +253,9 @@ const mapDispatchToProps = dispatch => {
   return {
     updateCatalogModeInState: catalogMode => {
       dispatch(updateCatalogModeInStateAction(catalogMode))
+    },
+    updateExpertSearchTextInState: expertSearchText => {
+      dispatch(updateExpertSearchTextInStateAction(expertSearchText))
     },
     updatePageIndexInState: pageIndex => {
       dispatch(updatePageIndexInStateAction(pageIndex))
@@ -256,6 +266,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     catalogMode: state.catalogMode,
+    expertSearchText: state.expertSearchText,
     pageIndex: state.pageIndex,
   }
 }
