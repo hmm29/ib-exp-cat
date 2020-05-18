@@ -6,6 +6,7 @@ import { CatalogExpertRow } from './CatalogExpertRow'
 import 'ka-table/style.scss'
 import '../styles/styles.scss'
 import * as catalogStyles from './Catalog.module.scss'
+import styled from "styled-components";
 
 import { connect } from 'react-redux'
 import {
@@ -16,11 +17,24 @@ import {
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
 import { search, updatePageIndex } from 'ka-table/actionCreators'
+import { searchData } from 'ka-table/Utils/FilterUtils';
 import { DataType, SortDirection, SortingMode } from 'ka-table/enums'
 import { DataRowFuncPropsWithChildren, DispatchFunc } from 'ka-table/types'
 
 const dataArray: any[] = []
 const PAGE_SIZE = 8
+
+const ExpertsTableWrapper = styled.div`
+  .ka-paging-pages {
+     & > .ka-paging-page-index {
+        display: none;
+     }
+     
+    ${props => props.pageCount && `& > div:nth-child(-n+${props.pageCount}) {
+      display: block;
+    }`}
+  }
+`
 
 export interface ICatalogProps {
   catalogMode: string
@@ -121,7 +135,7 @@ const Catalog: React.FC<ICatalogProps> = ({
     ],
     data: pageContext.experts,
     dataRow: props => <DataRow {...props} />,
-    noDataRow: () => 'No results on this page...',
+    noDataRow: () => '0 results - please try another search',
     rowKeyField: 'id',
     sortingMode: SortingMode.Single,
     paging: {
@@ -143,7 +157,7 @@ const Catalog: React.FC<ICatalogProps> = ({
     ],
     data: pageContext.services,
     dataRow: props => <DataRowServices {...props} />,
-    noDataRow: () => 'No results on this page...',
+    noDataRow: () => '0 results - please try another search',
     rowKeyField: 'id',
     sortingMode: SortingMode.Single,
   }
@@ -172,6 +186,8 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
+  const searchResults = searchData(expertsViewTableProps.columns, expertsViewTableProps.data, expertSearchText);
+
   const expertsView = (
     <>
       <div className={catalogStyles.title}>
@@ -189,7 +205,7 @@ const Catalog: React.FC<ICatalogProps> = ({
       <div className={catalogStyles.searchContainerWrapper}>
         <div className={catalogStyles.searchContainer}>
           <input
-            type="text"
+            type="search"
             defaultValue={expertsViewTableProps.search}
             placeholder="Search expert name, school, subject, or specialty..."
             onChange={event => {
@@ -198,14 +214,15 @@ const Catalog: React.FC<ICatalogProps> = ({
                 updatePageIndexInState(0) // update in global page index tracker
               }
               dispatch(search(event.currentTarget.value))
-
-              console.log(expertsViewTableProps.data.length) // TODO: take count - divide by page size and using styld componnts remove pages with 0 results
+              updateExpertSearchTextInState(event.currentTarget.value)
             }}
             className="top-element"
           />
         </div>
       </div>
-      <Table {...expertsViewTableProps} dispatch={dispatch} />
+      <ExpertsTableWrapper pageCount={Math.ceil( searchResults.length / PAGE_SIZE)}>
+        <Table {...expertsViewTableProps} dispatch={dispatch} />
+      </ExpertsTableWrapper>
     </>
   )
 
@@ -217,13 +234,11 @@ const Catalog: React.FC<ICatalogProps> = ({
       <div className={catalogStyles.searchContainerWrapper}>
         <div className={catalogStyles.searchContainer}>
           <input
-            type="text"
+            type="search"
             defaultValue={servicesViewTableProps.search}
             placeholder="Search for an educational service..."
             onChange={event => {
               servicesDispatch(search(event.currentTarget.value))
-
-              console.log(servicesViewTableProps.data.length) // TODO: take count - divide by page size and using styld componnts remove pages with 0 results
             }}
             className="top-element"
           />
