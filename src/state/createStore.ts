@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 
-const initialState = {catalogMode: "services", expertSearchText: "", pageIndex: 0};
+const initialState = {catalogMode: "experts", expertSearchText: "", pageIndex: 0};
 
 function reducer(state = initialState, action) {
     switch (action.type) {

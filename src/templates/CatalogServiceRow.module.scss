@@ -11,6 +11,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
+  line-height: 1.5;
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
   0 6.7px 5.3px rgba(0, 0, 0, 0.048);
   width: 100%;
@@ -37,8 +38,8 @@
   justify-content: center;
   align-items: center;
   background: #F1F5F7;
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   font-size: 40px;
 }
@@ -76,14 +77,14 @@
     font-family: 'Playfair Display', serif;
     font-weight: 800;
     font-size: 28px;
-    line-height: 35px;
+    line-height: 1.5;
     margin: 0;
   }
 }
 
 .expert-action-buttons {
   display: flex;
-  flex: 0.5;
+  flex: 0.4 0.4;
   height: 100%;
   background: #fff;
   flex-direction: column;

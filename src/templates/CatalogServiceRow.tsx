@@ -28,12 +28,12 @@ export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
       <div className={catalogServiceRowStyles.expertRowContent}>
         <div className={catalogServiceRowStyles.expertRowInfo}>
           <h1>{rowData && rowData.Name}</h1>
-          <h4
-            style={{
-              color: 'black',
-            }}
-          />
-          <div />
+          {/*<h4*/}
+            {/*style={{*/}
+              {/*color: 'black',*/}
+            {/*}}*/}
+          {/*/>*/}
+          {/*<div />*/}
           <div className={catalogServiceRowStyles.description}>
             {rowData && rowData.Description}
           </div>
@@ -44,13 +44,13 @@ export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
         <button
           className={catalogServiceRowStyles.browseButton}
           onClick={() => {
-            dispatch(rowData.Name); // perform search locally
-            updateExpertSearchTextInState(rowData.Name); // track search text value in global state
+            // dispatch(rowData.Name); // perform search locally
+            // updateExpertSearchTextInState(rowData.Name); // track search text value in global state
             updateCatalogModeInState('experts');
             window.scrollTo(0, 0); // back to top
           }}
         >
-          BROWSE SERVICE PROVIDERS
+          {rowData.Emoji} VIEW EXPERTS
         </button>
       </div>
     </div>

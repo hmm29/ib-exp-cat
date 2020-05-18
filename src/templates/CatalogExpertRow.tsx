@@ -52,6 +52,7 @@ export interface ICatalogExpertRowProps {
         }
       }
     ]
+    Employer_1_Name?: string
     Employer_1_Logo?: [
       {
         url: string
@@ -62,6 +63,19 @@ export interface ICatalogExpertRowProps {
         }
       }
     ]
+    Employer_1_Title?: string
+    Employer_2_Name?: string
+    Employer_2_Logo?: [
+      {
+        url: string
+        thumbnails: {
+          full: { url: string }
+          large: { url: string }
+          small: { url: string }
+        }
+      }
+      ]
+    Employer_2_Title?: string
   }
   [x: string]: any // for remaining props (rest)
 }
@@ -117,7 +131,58 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
             />
           </div>
           <div className={catalogExpertRowStyles.description}>
-            {rowData.Comments}
+            <ul>
+              {rowData.Undergraduate_Institution ? <li>
+                {rowData.Undergraduate_Institution
+                  ? `${
+                    new Date().getFullYear() <= rowData.Undergraduate_Graduation_Year
+                      ? 'Graduates'
+                      : 'Graduated'
+                    } from ${rowData.Undergraduate_Institution}`
+                  : ''}
+                {rowData.Undergraduate_Graduation_Year
+                  ? ` in ${rowData.Undergraduate_Graduation_Year}`
+                  : ''}
+                {rowData.Undergraduate_Degrees
+                  ? ` with degree(s) in ${rowData.Undergraduate_Degrees}`
+                  : ''}
+              </li> : null}
+              {rowData.Graduate_Institution ? <li>
+                {rowData.Graduate_Institution
+                  ? `${
+                    new Date().getFullYear() <= rowData.Graduate_Graduation_Year
+                      ? 'Graduates'
+                      : 'Graduated'
+                    } from ${rowData.Graduate_Institution}`
+                  : ''}
+                {rowData.Graduate_Graduation_Year ? ` in ${rowData.Graduate_Graduation_Year}` : ''}
+                {rowData.Graduate_Degrees
+                  ? ` with degree(s) in ${rowData.Graduate_Degrees}`
+                  : ''}
+              </li> : null}
+              {rowData.Employer_1_Name || rowData.Employer_2_Name ? <li>
+                {rowData.Employer_1_Name || rowData.Employer_2_Name
+                  ? 'Worked at '
+                  : ''}
+                {rowData.Employer_1_Name
+                  ? `${rowData.Employer_1_Name} ${
+                    rowData.Employer_1_Title
+                      ? `as a ${rowData.Employer_1_Title}`
+                      : ''
+                    }`
+                  : ''}{' '}
+                {rowData.Employer_2_Name
+                  ? `and ${rowData.Employer_2_Name} ${
+                    rowData.Employer_2_Title
+                      ? `as a ${rowData.Employer_2_Title}`
+                      : ''
+                    }`
+                  : ''}
+              </li> : null}
+              {rowData.Comments ? <li>
+                {rowData.Comments}
+              </li> : null}
+            </ul>
           </div>
           <div className={catalogExpertRowStyles.expertQuickFacts}>
             <div className={catalogExpertRowStyles.expertQuickFactEntry}>
@@ -163,7 +228,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
 
         <Link to={`/${rowData.id}`}>
           <button className={catalogExpertRowStyles.learnMoreButton}>
-            LEARN MORE
+            MARKETING PROFILE
           </button>
         </Link>
 

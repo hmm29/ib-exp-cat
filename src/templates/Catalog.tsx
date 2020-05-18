@@ -95,14 +95,14 @@ const Catalog: React.FC<ICatalogProps> = ({
         key: 'Undergraduate_Institution',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
-        title: 'Undergrad School Name',
+        title: 'Undergraduate School Name',
       },
       {
         dataType: DataType.String,
         key: 'Undergraduate_Degrees',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
-        title: 'Undergrad Degrees',
+        title: 'Undergraduate Degrees',
       },
       {
         dataType: DataType.String,
@@ -116,7 +116,7 @@ const Catalog: React.FC<ICatalogProps> = ({
         key: 'Graduate_Institution',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
-        title: 'Grad School Name',
+        title: 'Graduate School Name',
       },
       {
         dataType: DataType.String,
@@ -198,9 +198,9 @@ const Catalog: React.FC<ICatalogProps> = ({
           updateCatalogModeInState('services')
           window.scrollTo(0, 0) // back to top
         }}
-        className={catalogStyles.backToServices}
+        className={catalogStyles.switchModeButton}
       >
-        Back to Services
+        View All Services
       </button>
       <div className={catalogStyles.searchContainerWrapper}>
         <div className={catalogStyles.searchContainer}>
@@ -231,6 +231,15 @@ const Catalog: React.FC<ICatalogProps> = ({
       <div className={catalogStyles.title}>
         <h2>IvyBridge - Your Full Services Catalog</h2>
       </div>
+      <button
+        onClick={() => {
+          updateCatalogModeInState('experts')
+          window.scrollTo(0, 0) // back to top
+        }}
+        className={catalogStyles.switchModeButton}
+      >
+        View All Experts
+      </button>
       <div className={catalogStyles.searchContainerWrapper}>
         <div className={catalogStyles.searchContainer}>
           <input
@@ -246,10 +255,10 @@ const Catalog: React.FC<ICatalogProps> = ({
         <button
           className={catalogStyles.customServiceButton}
           onClick={() =>
-            window.open(`https://airtable.com/shr4clpmP2JgszBpD`, '_blank')
+            window.open(`https://ivybridge.co/mod/page/view.php?id=27`, '_parent')
           }
         >
-          REQUEST A CUSTOM SERVICE
+          REQUEST A SERVICE
         </button>
       </div>
       <Table {...servicesViewTableProps} dispatch={servicesDispatch} />
