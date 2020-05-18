@@ -42,7 +42,7 @@ export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
       <div className={catalogServiceRowStyles.expertActionButtons}>
 
         <button
-          className={catalogServiceRowStyles.bookButton}
+          className={catalogServiceRowStyles.browseButton}
           onClick={() => {
             dispatch(rowData.Name); // perform search locally
             updateExpertSearchTextInState(rowData.Name); // track search text value in global state
