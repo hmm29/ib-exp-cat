@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 
-const initialState = {catalogMode: "experts", expertSearchText: "", pageIndex: 0};
+const initialState = {catalogMode: "experts", expertSearchText: "", pageIndex: 0, searchResultCount: 0};
 
 function reducer(state = initialState, action) {
     switch (action.type) {
@@ -15,6 +15,10 @@ function reducer(state = initialState, action) {
       case 'PAGE_INDEX_UPDATE':
         return Object.assign({}, state, {
           pageIndex: action.pageIndex,
+        });
+      case 'SEARCH_RESULT_COUNT_UPDATE':
+        return Object.assign({}, state, {
+          searchResultCount: action.searchResultCount,
         });
       default:
         return state;

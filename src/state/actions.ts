@@ -18,3 +18,10 @@ export const updatePageIndexInStateAction = pageIndex => {
     pageIndex
   };
 }
+
+export const updateSearchResultCountInStateAction = searchResultCount => {
+  return {
+    type: 'SEARCH_RESULT_COUNT_UPDATE',
+    searchResultCount
+  }
+}

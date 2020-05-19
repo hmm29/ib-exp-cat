@@ -21,7 +21,7 @@ export interface ICatalogExpertRowProps {
     Graduate_Degrees?: string
     Graduate_Graduation_Year?: number
     Languages?: string
-    Specialties?: [string]
+    Services?: [string]
     Photo?: [
       {
         url: string
@@ -127,7 +127,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
               paddingLeft={10}
               borderRadius={200}
               tags={
-                rowData.Specialties ? rowData.Specialties.join(", ") : null              }
+                rowData.Services ? rowData.Services.join(", ") : null              }
             />
           </div>
           <div className={catalogExpertRowStyles.description}>
@@ -198,9 +198,9 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
               <p className={catalogExpertRowStyles.label}>Field(s)</p>
               <p className={catalogExpertRowStyles.quickFact}>
                 {rowData.Undergraduate_Degrees
-                  ? `${rowData.Undergraduate_Degrees} (Undergrad)`
+                  ? <>{rowData.Undergraduate_Degrees} (Undergrad)<br /></>
                   : null}
-                <br />
+
                 {rowData.Graduate_Degrees
                   ? `${rowData.Graduate_Degrees} (Graduate)`
                   : null}

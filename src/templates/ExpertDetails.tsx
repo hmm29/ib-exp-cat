@@ -58,7 +58,7 @@ const ExpertDetails = ({ pageContext }) => (
             borderRadius={200}
             justifyContent="center"
             tags={
-              pageContext.specialties ? pageContext.specialties.join(", ") : null
+              pageContext.services ? pageContext.services.join(", ") : null
             }
           />
         </div>
