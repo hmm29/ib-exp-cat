@@ -3,7 +3,6 @@ import { PropsWithChildren, useState } from 'react'
 import { CatalogServiceRow } from './CatalogServiceRow'
 import { CatalogExpertRow } from './CatalogExpertRow'
 import Fuse from 'fuse.js'
-import { intersection } from 'lodash'
 
 import 'ka-table/style.scss'
 import '../styles/styles.scss'
@@ -23,7 +22,6 @@ import { searchData } from 'ka-table/Utils/FilterUtils'
 import { DataType, SortDirection, SortingMode } from 'ka-table/enums'
 import { DataRowFuncPropsWithChildren, DispatchFunc } from 'ka-table/types'
 
-const dataArray: any[] = []
 const PAGE_SIZE: number = 8
 
 const ExpertsTableWrapper = styled.div`
@@ -59,29 +57,6 @@ const Catalog: React.FC<ICatalogProps> = ({
   updateExpertSearchTextInState,
   updatePageIndexInState,
 }) => {
-  const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
-    return <CatalogExpertRow key={i} rowData={rowData} />
-  }
-  // for non-empty search queries, initialize to empty array
-  const [searchResults, changeSearchResults] = useState([])
-
-  const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = (
-    { rowData },
-    i,
-  ) => {
-    return (
-      <CatalogServiceRow
-        key={i}
-        updateCatalogModeInState={updateCatalogModeInState}
-        updateExpertSearchTextInState={updateExpertSearchTextInState}
-        dispatch={value => {
-          dispatch(search(value))
-          changeSearchResults([])
-        }}
-        rowData={rowData}
-      />
-    )
-  }
 
   const expertsTablePropsInit: ITableProps = {
     columns: [
@@ -136,10 +111,10 @@ const Catalog: React.FC<ICatalogProps> = ({
       },
       {
         dataType: DataType.String,
-        key: 'Specialties_Text',
+        key: 'Services_Text',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
-        title: 'Specialties',
+        title: 'Services',
       },
     ],
     data: pageContext.experts,
@@ -172,6 +147,7 @@ const Catalog: React.FC<ICatalogProps> = ({
     sortingMode: SortingMode.Single,
   }
 
+  // PRO TIP: don't actually fuck with these hooks outside of the dispatch func
   const [expertsViewTableProps, changeExpertsViewTableProps] = useState(
     expertsTablePropsInit,
   )
@@ -179,6 +155,10 @@ const Catalog: React.FC<ICatalogProps> = ({
   const [servicesViewTableProps, changeServicesViewTableProps] = useState(
     servicesTablePropsInit,
   )
+
+  const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
+    return <CatalogExpertRow key={i} rowData={rowData} />
+  }
 
   const dispatch: DispatchFunc = action => {
     changeExpertsViewTableProps((prevState: ITableProps) =>
@@ -195,6 +175,32 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
+  // for non-empty search queries, initialize to pageContext.experts (full data set)
+  const [searchResults, changeSearchResults] = useState(pageContext.experts)
+
+  const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = (
+    { rowData },
+    i,
+  ) => {
+    return (
+      <CatalogServiceRow
+        key={i}
+        updateCatalogModeInState={updateCatalogModeInState}
+        updateExpertSearchTextInState={updateExpertSearchTextInState}
+        dispatch={value => {
+          dispatch(search(value))
+          const servicesPageResults = searchData(
+            expertsViewTableProps.columns,
+            expertsViewTableProps.data,
+            value,
+          )
+          changeSearchResults(servicesPageResults)
+        }}
+        rowData={rowData}
+      />
+    )
+  }
+
   const fuse = new Fuse(expertsViewTableProps.data, {
     keys: [
       'First_Name',
@@ -204,7 +210,7 @@ const Catalog: React.FC<ICatalogProps> = ({
       'Graduate_Institution',
       'Graduate_Degrees',
       'Languages',
-      'Specialties_Text',
+      'Services_Text',
     ],
   })
 
@@ -220,7 +226,7 @@ const Catalog: React.FC<ICatalogProps> = ({
         }}
         className={catalogStyles.switchModeButton}
       >
-        View All Services
+        View All Services ({pageContext.services.length})
       </button>
       <div className={catalogStyles.searchContainerWrapper}>
         <div className={catalogStyles.searchContainer}>
@@ -229,19 +235,17 @@ const Catalog: React.FC<ICatalogProps> = ({
             defaultValue={expertsViewTableProps.search}
             placeholder="Search expert name, school, subject, or specialty..."
             onChange={event => {
-              const value = event.currentTarget.value
+              const value = event.currentTarget.value;
 
               if (expertsViewTableProps.paging.pageIndex > 0) {
-                dispatch(updatePageIndex(0)) // update locally in table
+                dispatch(updatePageIndex(0)) // update locally in table to first page
                 updatePageIndexInState(0) // update in global page index tracker
               }
 
-              dispatch(search(value))
-              changeExpertsViewTableProps({
-                ...expertsViewTableProps,
-                search: value,
-              })
+              // this is to change the props / view
+              dispatch(search(value)); // when you need to manipulate props, just use the dispatcher
 
+              // this is to calculate data (util function)
               const results = searchData(
                 expertsViewTableProps.columns,
                 expertsViewTableProps.data,
@@ -254,27 +258,28 @@ const Catalog: React.FC<ICatalogProps> = ({
 
               // the purpose of this if/else branch is to track search results from regular table search and fuzzy search
               // the search results count is also used to calculate the number of page numbers to show, depending on the search results
-              if (!results.length && fuzzySearchResults.length) {
-                console.log('case 1')
-                changeSearchResults(fuzzySearchResults)
-                // only show ones from fuzzy
-
-                // TODO: dispatch action that shows only rows from fuzzy search
-              } else if (results.length) {
+              if (results.length) {
                 // regular case, pagination taken care of
-                console.log('case 2')
-                if (!value.length) {
-                  console.log('case 2A')
-                  changeSearchResults(pageContext.experts)
+                if (!value.length) { // if clear search
+                  changeSearchResults(pageContext.experts) // reinitialize
                 } else {
-                  console.log('case 2B')
                   changeSearchResults(results)
                 } // this just counts so you know how many pages to show
+
+                updateExpertSearchTextInState(value); // global state update
+              } else if (!results.length && fuzzySearchResults.length) {
+                // TODO: dispatch action that shows only rows from fuzzy search
+                // don't fuck with data
+
+                // just search for top one in fuzzySearchResults (best guess)
+                dispatch(search(fuzzySearchResults[0].Headline));
+                changeSearchResults(fuzzySearchResults[0])
+
+                updateExpertSearchTextInState(fuzzySearchResults[0].Headline); // global state update with correct name if fuzzy-corrected
               }
             }}
             className="top-element"
           />
-          <h1>{searchResults.length}</h1>
         </div>
       </div>
       <ExpertsTableWrapper

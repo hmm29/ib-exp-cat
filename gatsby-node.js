@@ -39,6 +39,7 @@ exports.createPages = ({ graphql, actions }) => {
                 Languages
                 Location
                 Specialties
+                Services
                 Employer_1_Name
                 Employer_1_Title
                 Employer_1_Logo {
@@ -87,7 +88,7 @@ exports.createPages = ({ graphql, actions }) => {
       path: '/',
       component: catalogTemplate,
       context: {
-        experts: expertsResult.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id, Specialties_Text: (edge.node.data.Specialties && edge.node.data.Specialties.join(" ")) || ""})),
+        experts: expertsResult.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id, Services_Text: (edge.node.data.Services && edge.node.data.Services.join(" ")) || ""})),
         services: servicesResult.data.allAirtable.edges.map(edge => Object.assign({}, edge.node.data, {id: edge.node.id}))
       },
     })
@@ -102,7 +103,7 @@ exports.createPages = ({ graphql, actions }) => {
           firstName: node.data.First_Name,
           headline: node.data.Headline,
           comments: node.data.Comments,
-          specialties: node.data.Specialties,
+          services: node.data.Services,
           undergradInst: node.data.Undergraduate_Institution,
           undergradDegrees: node.data.Undergraduate_Degrees,
           undergradGradYear: node.data.Undergraduate_Graduation_Year,
