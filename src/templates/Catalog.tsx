@@ -47,14 +47,14 @@ export interface ICatalogProps {
 }
 
 const Catalog: React.FC<ICatalogProps> = ({
-  catalogMode,
-  expertSearchText,
-  pageContext,
-  pageIndex,
-  updateCatalogModeInState,
-  updateExpertSearchTextInState,
-  updatePageIndexInState,
-}) => {
+                                            catalogMode,
+                                            expertSearchText,
+                                            pageContext,
+                                            pageIndex,
+                                            updateCatalogModeInState,
+                                            updateExpertSearchTextInState,
+                                            updatePageIndexInState,
+                                          }) => {
   const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
     return <CatalogExpertRow key={i} rowData={rowData} />
   }
@@ -142,7 +142,8 @@ const Catalog: React.FC<ICatalogProps> = ({
       enabled: true,
       pageIndex,
       pageSize: PAGE_SIZE,
-    }
+    },
+    search: expertSearchText
   }
 
   const servicesTablePropsInit: ITableProps = {
@@ -165,11 +166,10 @@ const Catalog: React.FC<ICatalogProps> = ({
   const [expertsViewTableProps, changeExpertsViewTableProps] = useState(
     expertsTablePropsInit,
   )
+
   const [servicesViewTableProps, changeServicesViewTableProps] = useState(
     servicesTablePropsInit,
   )
-
-  updatePageIndexInState(pageIndex);
 
   const dispatch: DispatchFunc = action => {
     changeExpertsViewTableProps((prevState: ITableProps) =>
@@ -186,7 +186,7 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
-  const searchResults = searchData(expertsViewTableProps.columns, expertsViewTableProps.data, expertSearchText);
+  const [searchResults, changeSearchResults] = useState([])
 
   const expertsView = (
     <>
@@ -214,7 +214,11 @@ const Catalog: React.FC<ICatalogProps> = ({
                 updatePageIndexInState(0) // update in global page index tracker
               }
               dispatch(search(event.currentTarget.value))
-              updateExpertSearchTextInState(event.currentTarget.value)
+              changeExpertsViewTableProps({...expertsViewTableProps, search: event.currentTarget.value})
+
+              const searchResults = searchData(expertsViewTableProps.columns, expertsViewTableProps.data, event.currentTarget.value);
+              changeSearchResults(searchResults);
+
             }}
             className="top-element"
           />
@@ -267,8 +271,8 @@ const Catalog: React.FC<ICatalogProps> = ({
 
   return (
     <div className={catalogStyles.catalog}>
-      {/* update tab here, and reset the page index to 0 when a service is clicked on in services mode  */}
-      {catalogMode === "services" ? servicesView : expertsView}
+      {catalogMode === "services" ? servicesView : null}
+      {catalogMode === "experts" ? expertsView : null}
     </div>
   )
 }

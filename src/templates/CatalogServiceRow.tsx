@@ -44,8 +44,8 @@ export const CatalogServiceRow: React.FC<ICatalogServiceRowProps> = (props) => {
         <button
           className={catalogServiceRowStyles.browseButton}
           onClick={() => {
-            // dispatch(rowData.Name); // perform search locally
-            // updateExpertSearchTextInState(rowData.Name); // track search text value in global state
+            dispatch(rowData.Name); // perform search locally
+            updateExpertSearchTextInState(rowData.Name); // track search text value in global state
             updateCatalogModeInState('experts');
             window.scrollTo(0, 0); // back to top
           }}
