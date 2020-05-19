@@ -14,6 +14,7 @@ import {
   updateCatalogModeInStateAction,
   updateExpertSearchTextInStateAction,
   updatePageIndexInStateAction,
+  updateSearchResultCountInStateAction,
 } from '../state/actions'
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
@@ -43,9 +44,11 @@ export interface ICatalogProps {
   expertSearchText: string
   pageContext: { experts: any[]; services: any[] }
   pageIndex: number
+  searchResultCount: number
   updateCatalogModeInState: Function
   updateExpertSearchTextInState: Function
   updatePageIndexInState: Function
+  updateSearchResultCountInState: Function
 }
 
 const Catalog: React.FC<ICatalogProps> = ({
@@ -53,11 +56,12 @@ const Catalog: React.FC<ICatalogProps> = ({
   expertSearchText,
   pageContext,
   pageIndex,
+  searchResultCount,
   updateCatalogModeInState,
   updateExpertSearchTextInState,
   updatePageIndexInState,
+  updateSearchResultCountInState,
 }) => {
-
   const expertsTablePropsInit: ITableProps = {
     columns: [
       {
@@ -147,6 +151,8 @@ const Catalog: React.FC<ICatalogProps> = ({
     sortingMode: SortingMode.Single,
   }
 
+  // HOOKS
+
   // PRO TIP: don't actually fuck with these hooks outside of the dispatch func
   const [expertsViewTableProps, changeExpertsViewTableProps] = useState(
     expertsTablePropsInit,
@@ -156,9 +162,13 @@ const Catalog: React.FC<ICatalogProps> = ({
     servicesTablePropsInit,
   )
 
-  const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
-    return <CatalogExpertRow key={i} rowData={rowData} />
-  }
+  const [searchResultCounter, changeSearchResultCounter] = useState(
+    searchResultCount > 0 ? searchResultCount : pageContext.experts.length,
+  )
+
+  updatePageIndexInState(expertsViewTableProps.paging.pageIndex) // Important: save global here when table props update
+  // save search result count here too
+  updateSearchResultCountInState(searchResultCounter)
 
   const dispatch: DispatchFunc = action => {
     changeExpertsViewTableProps((prevState: ITableProps) =>
@@ -175,8 +185,9 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
-  // for non-empty search queries, initialize to pageContext.experts (full data set)
-  const [searchResults, changeSearchResults] = useState(pageContext.experts)
+  const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
+    return <CatalogExpertRow key={i} rowData={rowData} />
+  }
 
   const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = (
     { rowData },
@@ -194,7 +205,7 @@ const Catalog: React.FC<ICatalogProps> = ({
             expertsViewTableProps.data,
             value,
           )
-          changeSearchResults(servicesPageResults)
+          changeSearchResultCounter(servicesPageResults.length)
         }}
         rowData={rowData}
       />
@@ -222,6 +233,9 @@ const Catalog: React.FC<ICatalogProps> = ({
       <button
         onClick={() => {
           updateCatalogModeInState('services')
+          dispatch(updatePageIndex(0)) // reset pagination
+          updatePageIndexInState(0) // global state update
+          changeSearchResultCounter(pageContext.experts.length) // clear search results
           window.scrollTo(0, 0) // back to top
         }}
         className={catalogStyles.switchModeButton}
@@ -235,7 +249,7 @@ const Catalog: React.FC<ICatalogProps> = ({
             defaultValue={expertsViewTableProps.search}
             placeholder="Search expert name, school, subject, or specialty..."
             onChange={event => {
-              const value = event.currentTarget.value;
+              const value = event.currentTarget.value
 
               if (expertsViewTableProps.paging.pageIndex > 0) {
                 dispatch(updatePageIndex(0)) // update locally in table to first page
@@ -243,7 +257,7 @@ const Catalog: React.FC<ICatalogProps> = ({
               }
 
               // this is to change the props / view
-              dispatch(search(value)); // when you need to manipulate props, just use the dispatcher
+              dispatch(search(value)) // when you need to manipulate props, just use the dispatcher
 
               // this is to calculate data (util function)
               const results = searchData(
@@ -260,20 +274,21 @@ const Catalog: React.FC<ICatalogProps> = ({
               // the search results count is also used to calculate the number of page numbers to show, depending on the search results
               if (results.length) {
                 // regular case, pagination taken care of
-                if (!value.length) { // if clear search
-                  changeSearchResults(pageContext.experts) // reinitialize
+                if (!value.length) {
+                  // if clear search
+                  changeSearchResultCounter(pageContext.experts.length) // reinitialize
                 } else {
-                  changeSearchResults(results)
+                  changeSearchResultCounter(results.length)
                 } // this just counts so you know how many pages to show
-                updateExpertSearchTextInState(value); // global state update
+                updateExpertSearchTextInState(value) // global state update
               } else if (!results.length && fuzzySearchResults.length) {
                 // TODO: dispatch action that shows only rows from fuzzy search
                 // don't fuck with data (dispatch(updateData) or changeExpertsViewTableProps)
 
                 // just search for top one in fuzzySearchResults (best guess)
-                dispatch(search(fuzzySearchResults[0].Headline));
-                changeSearchResults(fuzzySearchResults[0])
-                updateExpertSearchTextInState(fuzzySearchResults[0].Headline); // save fuzzy-corrected headline
+                dispatch(search(fuzzySearchResults[0].Headline))
+                changeSearchResultCounter(1)
+                updateExpertSearchTextInState(fuzzySearchResults[0].Headline) // save fuzzy-corrected headline
               }
             }}
             className="top-element"
@@ -281,7 +296,7 @@ const Catalog: React.FC<ICatalogProps> = ({
         </div>
       </div>
       <ExpertsTableWrapper
-        pageCount={Math.ceil(searchResults.length / PAGE_SIZE)}
+        pageCount={Math.ceil(searchResultCounter / PAGE_SIZE)}
       >
         <Table {...expertsViewTableProps} dispatch={dispatch} />
       </ExpertsTableWrapper>
@@ -349,6 +364,9 @@ const mapDispatchToProps = dispatch => {
     updatePageIndexInState: pageIndex => {
       dispatch(updatePageIndexInStateAction(pageIndex))
     },
+    updateSearchResultCountInState: searchResultCount => {
+      dispatch(updateSearchResultCountInStateAction(searchResultCount))
+    },
   }
 }
 
@@ -357,6 +375,7 @@ const mapStateToProps = state => {
     catalogMode: state.catalogMode,
     expertSearchText: state.expertSearchText,
     pageIndex: state.pageIndex,
+    searchResultCount: state.searchResultCount,
   }
 }
 
