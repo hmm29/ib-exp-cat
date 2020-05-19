@@ -167,8 +167,7 @@ const Catalog: React.FC<ICatalogProps> = ({
   )
 
   updatePageIndexInState(expertsViewTableProps.paging.pageIndex) // Important: save global here when table props update
-  // save search result count here too
-  updateSearchResultCountInState(searchResultCounter)
+  updateSearchResultCountInState(searchResultCounter)  // save search result count here too
 
   const dispatch: DispatchFunc = action => {
     changeExpertsViewTableProps((prevState: ITableProps) =>
