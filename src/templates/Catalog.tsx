@@ -2,11 +2,13 @@ import * as React from 'react'
 import { PropsWithChildren, useState } from 'react'
 import { CatalogServiceRow } from './CatalogServiceRow'
 import { CatalogExpertRow } from './CatalogExpertRow'
+import Fuse from 'fuse.js'
+import { intersection } from 'lodash'
 
 import 'ka-table/style.scss'
 import '../styles/styles.scss'
 import * as catalogStyles from './Catalog.module.scss'
-import styled from "styled-components";
+import styled from 'styled-components'
 
 import { connect } from 'react-redux'
 import {
@@ -17,22 +19,24 @@ import {
 
 import { ITableProps, kaReducer, Table } from 'ka-table'
 import { search, updatePageIndex } from 'ka-table/actionCreators'
-import { searchData } from 'ka-table/Utils/FilterUtils';
+import { searchData } from 'ka-table/Utils/FilterUtils'
 import { DataType, SortDirection, SortingMode } from 'ka-table/enums'
 import { DataRowFuncPropsWithChildren, DispatchFunc } from 'ka-table/types'
 
 const dataArray: any[] = []
-const PAGE_SIZE = 8
+const PAGE_SIZE: number = 8
 
 const ExpertsTableWrapper = styled.div`
   .ka-paging-pages {
-     & > .ka-paging-page-index {
-        display: none;
-     }
-     
-    ${props => props.pageCount && `& > div:nth-child(-n+${props.pageCount}) {
+    & > .ka-paging-page-index {
+      display: none;
+    }
+
+    ${props =>
+      props.pageCount &&
+      `& > div:nth-child(-n+${props.pageCount}) {
       display: block;
-    }`}
+    }`};
   }
 `
 
@@ -47,17 +51,19 @@ export interface ICatalogProps {
 }
 
 const Catalog: React.FC<ICatalogProps> = ({
-                                            catalogMode,
-                                            expertSearchText,
-                                            pageContext,
-                                            pageIndex,
-                                            updateCatalogModeInState,
-                                            updateExpertSearchTextInState,
-                                            updatePageIndexInState,
-                                          }) => {
+  catalogMode,
+  expertSearchText,
+  pageContext,
+  pageIndex,
+  updateCatalogModeInState,
+  updateExpertSearchTextInState,
+  updatePageIndexInState,
+}) => {
   const DataRow: React.FC<DataRowFuncPropsWithChildren> = ({ rowData }, i) => {
     return <CatalogExpertRow key={i} rowData={rowData} />
   }
+  // for non-empty search queries, initialize to empty array
+  const [searchResults, changeSearchResults] = useState([])
 
   const DataRowServices: React.FC<DataRowFuncPropsWithChildren> = (
     { rowData },
@@ -68,7 +74,10 @@ const Catalog: React.FC<ICatalogProps> = ({
         key={i}
         updateCatalogModeInState={updateCatalogModeInState}
         updateExpertSearchTextInState={updateExpertSearchTextInState}
-        dispatch={(value) => dispatch(search(value))}
+        dispatch={value => {
+          dispatch(search(value))
+          changeSearchResults([])
+        }}
         rowData={rowData}
       />
     )
@@ -88,7 +97,7 @@ const Catalog: React.FC<ICatalogProps> = ({
         key: 'Headline',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
-        title: 'Description',
+        title: 'Headline',
       },
       {
         dataType: DataType.String,
@@ -106,17 +115,17 @@ const Catalog: React.FC<ICatalogProps> = ({
       },
       {
         dataType: DataType.String,
-        key: 'Graduate_Degrees',
-        sortDirection: SortDirection.Ascend,
-        style: { width: 60 },
-        title: 'Graduate Degrees',
-      },
-      {
-        dataType: DataType.String,
         key: 'Graduate_Institution',
         sortDirection: SortDirection.Ascend,
         style: { width: 60 },
         title: 'Graduate School Name',
+      },
+      {
+        dataType: DataType.String,
+        key: 'Graduate_Degrees',
+        sortDirection: SortDirection.Ascend,
+        style: { width: 60 },
+        title: 'Graduate Degrees',
       },
       {
         dataType: DataType.String,
@@ -143,7 +152,7 @@ const Catalog: React.FC<ICatalogProps> = ({
       pageIndex,
       pageSize: PAGE_SIZE,
     },
-    search: expertSearchText
+    search: expertSearchText,
   }
 
   const servicesTablePropsInit: ITableProps = {
@@ -186,7 +195,18 @@ const Catalog: React.FC<ICatalogProps> = ({
     )
   }
 
-  const [searchResults, changeSearchResults] = useState([])
+  const fuse = new Fuse(expertsViewTableProps.data, {
+    keys: [
+      'First_Name',
+      'Headline',
+      'Undergraduate_Institution',
+      'Undergraduate_Degrees',
+      'Graduate_Institution',
+      'Graduate_Degrees',
+      'Languages',
+      'Specialties_Text',
+    ],
+  })
 
   const expertsView = (
     <>
@@ -209,22 +229,57 @@ const Catalog: React.FC<ICatalogProps> = ({
             defaultValue={expertsViewTableProps.search}
             placeholder="Search expert name, school, subject, or specialty..."
             onChange={event => {
+              const value = event.currentTarget.value
+
               if (expertsViewTableProps.paging.pageIndex > 0) {
                 dispatch(updatePageIndex(0)) // update locally in table
                 updatePageIndexInState(0) // update in global page index tracker
               }
-              dispatch(search(event.currentTarget.value))
-              changeExpertsViewTableProps({...expertsViewTableProps, search: event.currentTarget.value})
 
-              const searchResults = searchData(expertsViewTableProps.columns, expertsViewTableProps.data, event.currentTarget.value);
-              changeSearchResults(searchResults);
+              dispatch(search(value))
+              changeExpertsViewTableProps({
+                ...expertsViewTableProps,
+                search: value,
+              })
 
+              const results = searchData(
+                expertsViewTableProps.columns,
+                expertsViewTableProps.data,
+                value,
+              )
+
+              const fuzzySearchResults = fuse
+                .search(value)
+                .map((e, i) => e.item)
+
+              // the purpose of this if/else branch is to track search results from regular table search and fuzzy search
+              // the search results count is also used to calculate the number of page numbers to show, depending on the search results
+              if (!results.length && fuzzySearchResults.length) {
+                console.log('case 1')
+                changeSearchResults(fuzzySearchResults)
+                // only show ones from fuzzy
+
+                // TODO: dispatch action that shows only rows from fuzzy search
+              } else if (results.length) {
+                // regular case, pagination taken care of
+                console.log('case 2')
+                if (!value.length) {
+                  console.log('case 2A')
+                  changeSearchResults(pageContext.experts)
+                } else {
+                  console.log('case 2B')
+                  changeSearchResults(results)
+                } // this just counts so you know how many pages to show
+              }
             }}
             className="top-element"
           />
+          <h1>{searchResults.length}</h1>
         </div>
       </div>
-      <ExpertsTableWrapper pageCount={Math.ceil( searchResults.length / PAGE_SIZE)}>
+      <ExpertsTableWrapper
+        pageCount={Math.ceil(searchResults.length / PAGE_SIZE)}
+      >
         <Table {...expertsViewTableProps} dispatch={dispatch} />
       </ExpertsTableWrapper>
     </>
@@ -259,7 +314,10 @@ const Catalog: React.FC<ICatalogProps> = ({
         <button
           className={catalogStyles.customServiceButton}
           onClick={() =>
-            window.open(`https://ivybridge.co/mod/page/view.php?id=27`, '_parent')
+            window.open(
+              `https://ivybridge.co/mod/page/view.php?id=27`,
+              '_parent',
+            )
           }
         >
           REQUEST A SERVICE
@@ -271,8 +329,8 @@ const Catalog: React.FC<ICatalogProps> = ({
 
   return (
     <div className={catalogStyles.catalog}>
-      {catalogMode === "services" ? servicesView : null}
-      {catalogMode === "experts" ? expertsView : null}
+      {catalogMode === 'services' ? servicesView : null}
+      {catalogMode === 'experts' ? expertsView : null}
     </div>
   )
 }
