@@ -265,17 +265,15 @@ const Catalog: React.FC<ICatalogProps> = ({
                 } else {
                   changeSearchResults(results)
                 } // this just counts so you know how many pages to show
-
                 updateExpertSearchTextInState(value); // global state update
               } else if (!results.length && fuzzySearchResults.length) {
                 // TODO: dispatch action that shows only rows from fuzzy search
-                // don't fuck with data
+                // don't fuck with data (dispatch(updateData) or changeExpertsViewTableProps)
 
                 // just search for top one in fuzzySearchResults (best guess)
                 dispatch(search(fuzzySearchResults[0].Headline));
                 changeSearchResults(fuzzySearchResults[0])
-
-                updateExpertSearchTextInState(fuzzySearchResults[0].Headline); // global state update with correct name if fuzzy-corrected
+                updateExpertSearchTextInState(fuzzySearchResults[0].Headline); // save fuzzy-corrected headline
               }
             }}
             className="top-element"
