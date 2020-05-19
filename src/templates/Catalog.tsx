@@ -288,6 +288,9 @@ const Catalog: React.FC<ICatalogProps> = ({
                 dispatch(search(fuzzySearchResults[0].Headline))
                 changeSearchResultCounter(1)
                 updateExpertSearchTextInState(fuzzySearchResults[0].Headline) // save fuzzy-corrected headline
+              } else {
+                // no results, so searchResultCount to 0
+                changeSearchResultCounter(0)
               }
             }}
             className="top-element"
