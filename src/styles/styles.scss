@@ -12,7 +12,8 @@
 .ka-tbody {
   padding-top: 100px;
 
-  // for column name line breaks (fat table head)
+  // for column name line breaks
+
   @media (max-width: 1340px) {
     padding-top: 90px;
   }
