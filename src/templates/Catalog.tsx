@@ -313,6 +313,8 @@ const Catalog: React.FC<ICatalogProps> = ({
       <button
         onClick={() => {
           updateCatalogModeInState('experts')
+          dispatch(search(''));
+          updateExpertSearchTextInState('');
           window.scrollTo(0, 0) // back to top
         }}
         className={catalogStyles.switchModeButton}
