@@ -106,7 +106,7 @@ export const CatalogExpertRow: React.FC<ICatalogExpertRowProps> = props => {
       <div className={catalogExpertRowStyles.expertRowContent}>
         <div className={catalogExpertRowStyles.expertRowInfo}>
           <h1>
-            {rowData && rowData.Headline}
+            {rowData && rowData.First_Name}: {rowData && rowData.Headline}
           </h1>
           <h4
             style={{
